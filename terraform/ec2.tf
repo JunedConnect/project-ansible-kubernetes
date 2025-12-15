@@ -6,8 +6,9 @@ resource "aws_instance" "control_plane" {
   security_groups = [aws_security_group.kubernetes.id]
   key_name = aws_key_pair.this.key_name
   tags = {
+    name = "control-plane"
     role = "control-plane"
-    Project = "ansible-kubernetes"
+    project = "ansible-kubernetes"
   }
 }
 
@@ -19,8 +20,9 @@ resource "aws_instance" "worker_node_1" {
   security_groups = [aws_security_group.kubernetes.id]
   key_name = aws_key_pair.this.key_name
   tags = {
-    role = "worker-node-1"
-    Project = "ansible-kubernetes"
+    name = "worker-node-1"
+    role = "worker-node"
+    project = "ansible-kubernetes"
   }
 }
 
@@ -32,8 +34,9 @@ resource "aws_instance" "worker_node_2" {
   security_groups = [aws_security_group.kubernetes.id]
   key_name = aws_key_pair.this.key_name
   tags = {
-    role = "worker-node-2"
-    Project = "ansible-kubernetes"
+    name = "worker-node-2"
+    role = "worker-node"
+    project = "ansible-kubernetes"
   }
 }
 
@@ -42,6 +45,12 @@ resource "aws_security_group" "kubernetes" {
   description = "kubernetes security group"
   vpc_id      = module.vpc.vpc_id
 
+  ingress {
+  from_port   = -1
+  to_port     = -1
+  protocol    = "icmp"
+  cidr_blocks = ["0.0.0.0/0"]
+  }
   ingress {
     from_port   = 22
     to_port     = 22

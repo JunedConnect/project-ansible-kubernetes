@@ -10,8 +10,8 @@ terraform {
   }
 
   backend "s3" {
-    bucket       = "tf-state-project-ansible-kubernetes"
-    key          = "terraform.tfstate"
+    bucket       = "all-my-tf"
+    key          = "terraform-project-ansible-kubernetes.tfstate"
     region       = "eu-west-2"
     encrypt      = "true"
     use_lockfile = true
