@@ -1,0 +1,15 @@
+plugin: amazon.aws.aws_ec2
+regions:
+  - eu-west-2
+filters:
+  tag:project: ansible-kubernetes
+  instance-state-name: running
+keyed_groups:
+  - key: tags.role
+    prefix: tag
+  - key: tags.project
+    prefix: tag
+hostnames:
+  - tag:name
+compose:
+  ansible_host: public_dns_name # or you can use public_ip_address
