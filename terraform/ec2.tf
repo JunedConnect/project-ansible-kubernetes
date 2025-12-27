@@ -1,8 +1,30 @@
+resource "aws_instance" "bastion_host" {
+
+  ami           = "ami-0a0ff88d0f3f85a14" # Ubuntu 22.04 LTS
+  instance_type = "t3.micro"
+  subnet_id     = module.vpc.public_subnet_1_id
+  security_groups = [aws_security_group.bastionhost.id]
+  key_name = aws_key_pair.this.key_name
+  tags = {
+    name = "bastion-host"
+    role = "bastion-host"
+    project = "ansible-kubernetes"
+  }
+
+  # user_data= file("userdata-cp.sh")
+
+  lifecycle {
+    ignore_changes = [
+      security_groups
+    ]
+}
+}
+
 resource "aws_instance" "control_plane" {
 
   ami           = "ami-0a0ff88d0f3f85a14" # Ubuntu 22.04 LTS
   instance_type = "t3.medium"
-  subnet_id     = module.vpc.public_subnet_1_id # make sure to move to private subnet in the end
+  subnet_id     = module.vpc.private_subnet_1_id # make sure to move to private subnet in the end
   security_groups = [aws_security_group.controlplane.id]
   key_name = aws_key_pair.this.key_name
   tags = {
@@ -24,7 +46,7 @@ resource "aws_instance" "worker_node_1" {
 
   ami           = "ami-0a0ff88d0f3f85a14" # Ubuntu 22.04 LTS
   instance_type = "t3.micro"
-  subnet_id     = module.vpc.public_subnet_1_id # make sure to move to private subnet in the end
+  subnet_id     = module.vpc.private_subnet_1_id
   security_groups = [aws_security_group.workernode.id]
   key_name = aws_key_pair.this.key_name
   tags = {
@@ -46,7 +68,7 @@ resource "aws_instance" "worker_node_2" {
 
   ami           = "ami-0a0ff88d0f3f85a14" # Ubuntu 22.04 LTS
   instance_type = "t3.micro"
-  subnet_id     = module.vpc.public_subnet_2_id # make sure to move to private subnet in the end
+  subnet_id     = module.vpc.private_subnet_2_id
   security_groups = [aws_security_group.workernode.id]
   key_name = aws_key_pair.this.key_name
   tags = {
@@ -70,6 +92,12 @@ resource "aws_key_pair" "this" {
 }
 
 
+resource "aws_security_group" "bastionhost" {
+  name        = "bastionhost"
+  description = "Bsation Host SG"
+  vpc_id      = module.vpc.vpc_id
+}
+
 resource "aws_security_group" "controlplane" {
   name        = "controlplane"
   description = "Kubernetes control plane SG"
@@ -82,7 +110,18 @@ resource "aws_security_group" "workernode" {
   vpc_id      = module.vpc.vpc_id
 }
 
-# SSH
+# Bastion host SSH
+
+resource "aws_vpc_security_group_ingress_rule" "bh_ssh" {
+  security_group_id = aws_security_group.bastionhost.id
+  cidr_ipv4         = "0.0.0.0/0"
+  from_port         = 22
+  to_port           = 22
+  ip_protocol       = "tcp"
+  description       = "SSH access to control plane"
+}
+
+# Control plane SSH
 resource "aws_vpc_security_group_ingress_rule" "cp_ssh" {
   security_group_id = aws_security_group.controlplane.id
   cidr_ipv4         = "0.0.0.0/0"
@@ -290,6 +329,13 @@ resource "aws_vpc_security_group_ingress_rule" "cp_icmp" {
 }
 
 # egress
+
+resource "aws_vpc_security_group_egress_rule" "bh_all" {
+  security_group_id = aws_security_group.bastionhost.id
+  cidr_ipv4         = "0.0.0.0/0"
+  ip_protocol       = "-1"
+  description       = "allow all outbound traffic"
+}
 resource "aws_vpc_security_group_egress_rule" "wn_all" {
   security_group_id = aws_security_group.workernode.id
   cidr_ipv4         = "0.0.0.0/0"
