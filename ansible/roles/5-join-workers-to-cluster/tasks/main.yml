@@ -1,0 +1,7 @@
+---
+# tasks file for join-workers-to-cluster
+  - name: Join Worker Node to Control Plane # here is a link to where I had found out how to useputs of previous tasks, and use them in other tasks : https://devops.stackexchange.com/questions/18911/how-to-pass-the-result-from-one-task-on-one-host-to-another-task-on-another-h
+    ansible.builtin.shell: "{{ hostvars['localhost']['worker_node_join_command'] }}>> node_joined.txt"
+    args:
+      chdir: $HOME
+      creates: node_joined.txt

@@ -1,0 +1,4 @@
+---
+# defaults file for prerequisites
+# No specific variables required - uses built-in Ansible variables
+# This role disables swap, sets hostname, upgrades packages, and enables IP forwarding

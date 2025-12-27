@@ -1,0 +1,6 @@
+---
+# defaults file for install-kubernetes
+# Kubernetes version to install
+kube_version: "v1.35"
+# Specific version of Kubernetes components (kubelet, kubeadm, kubectl)
+kube_components_version: "1.35.0-1.1"

@@ -1,0 +1,6 @@
+---
+# defaults file for install-cilium
+# Cilium version to install
+cilium_version: "v1.18.3"
+# IPv4 pod CIDR pool for the cluster
+clusterPoolIPv4PodCIDRList: "20.0.0.0/8"

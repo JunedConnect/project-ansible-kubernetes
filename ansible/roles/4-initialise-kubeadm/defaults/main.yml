@@ -1,0 +1,4 @@
+---
+# defaults file for initialise-kubeadm
+# User for kubeconfig setup
+ansible_user: ubuntu

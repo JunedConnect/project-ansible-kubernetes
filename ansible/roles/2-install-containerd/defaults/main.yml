@@ -1,0 +1,3 @@
+---
+# defaults file for install-containerd
+# No specific variables required - installs and configures containerd with default settings
