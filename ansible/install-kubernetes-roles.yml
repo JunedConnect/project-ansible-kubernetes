@@ -1,0 +1,38 @@
+- name: prerequisites
+  hosts: tag_ansible_kubernetes
+  become: true
+  roles:
+    - 1-prerequisites
+
+- name: install-containerd
+  hosts: tag_ansible_kubernetes
+  become: true
+  roles:
+    - 2-install-containerd
+
+- name: install-kubernetes
+  hosts: tag_ansible_kubernetes
+  become: true
+  vars_files:
+  - ./variables.yml
+  roles:
+    - 3-install-kubernetes
+
+- name: initialise-kubeadm
+  hosts: tag_control_plane
+  become: true
+  roles:
+    - 4-initialise-kubeadm
+
+- name: join-workers-to-cluster
+  hosts: tag_worker_node
+  become: true
+  roles:
+    - 5-join-workers-to-cluster
+
+- name: install-cilium
+  hosts: tag_control_plane
+  vars_files:
+  - ./variables.yml
+  roles:
+    - 6-install-cilium

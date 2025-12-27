@@ -1,0 +1,3 @@
+---
+# defaults file for join-workers-to-cluster
+# No variables required - uses worker node join command from control plane

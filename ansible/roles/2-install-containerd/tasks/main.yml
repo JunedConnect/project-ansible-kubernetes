@@ -1,0 +1,24 @@
+---
+# tasks file for install-containerd
+  - name: Install Package
+    ansible.builtin.apt:
+      name: containerd
+      state: present
+
+  - name: Check if containerd Config Exists
+    ansible.builtin.stat:
+      path: /etc/containerd/config.toml
+    register: containerd_config
+
+  - name: Check SystemdCgroup Value
+    ansible.builtin.shell: grep "SystemdCgroup" /etc/containerd/config.toml
+    register: systemd_cgroup
+    when: containerd_config.stat.exists
+
+  - name: Configure containerd
+    ansible.builtin.shell: |
+      mkdir -p /etc/containerd
+      containerd config default | tee /etc/containerd/config.toml
+      sed -i 's/SystemdCgroup = false/SystemdCgroup = true/g' /etc/containerd/config.toml
+      systemctl restart containerd
+    when: "not containerd_config.stat.exists or 'false' in systemd_cgroup.stdout" # this means that the task will only when on the condition that the either the file does NOT exist, or that the value of systemcgroup is false

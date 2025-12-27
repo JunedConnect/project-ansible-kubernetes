@@ -1,0 +1,32 @@
+---
+# tasks file for initialise-kubeadm
+  - name: Initialise Kubeadm
+    ansible.builtin.shell: kubeadm init
+    args:
+      creates: /etc/kubernetes/admin.conf
+
+  - name: Create Kube Config Directory
+    ansible.builtin.file:
+      path: /home/ubuntu/.kube
+      state: directory
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+      mode: 755
+
+  - name: Copy Admin Kube Config to User Kube Config
+    ansible.builtin.copy:
+      src: /etc/kubernetes/admin.conf
+      dest: /home/ubuntu/.kube/config
+      owner: "{{ ansible_user }}"
+      group: "{{ ansible_user }}"
+      remote_src: true
+  
+  - name: Retrieve Worker Node Join Command
+    shell: kubeadm token create --print-join-command
+    register: worker_node_join_command # this will allow the use of the output for workers to be able to join
+
+  - name: set join command
+    set_fact:
+      worker_node_join_command: "{{ worker_node_join_command.stdout }}"
+    delegate_to: localhost
+    delegate_facts: True

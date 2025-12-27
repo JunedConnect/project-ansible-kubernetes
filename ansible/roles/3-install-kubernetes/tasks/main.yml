@@ -1,0 +1,37 @@
+---
+# tasks file for install-kubernetes
+  - name: Install Packages
+    ansible.builtin.apt:
+      name:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gpg
+      state: present
+
+  - name: Download Google Cloud Public Signing Key
+    ansible.builtin.shell: curl -fsSL https://pkgs.k8s.io/core:/stable:/{{ kube_version }}/deb/Release.key | gpg --yes --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+
+  - name: Add Kubernetes Apt Repository
+    ansible.builtin.shell: echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/{{ kube_version }}/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list
+
+  - name: Apt Update
+    ansible.builtin.apt:
+      update_cache: true
+
+  - name: Install Kubernetes Components
+    ansible.builtin.apt:
+      name:
+        - kubelet={{ kube_components_version }}
+        - kubeadm={{ kube_components_version }}
+        - kubectl={{ kube_components_version }}
+      state: present
+
+  - name: Hold Kubernetes Packages
+    ansible.builtin.dpkg_selections:
+      name: "{{ item }}"
+      selection: hold
+    loop:
+      - kubelet
+      - kubeadm
+      - kubectl
