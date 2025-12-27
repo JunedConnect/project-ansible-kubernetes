@@ -1,3 +1,4 @@
+#initial working playbook to install kubernetes, this is has been succeded by the Ansible Roles which have been configured to be more idempodent
 ---
 - name: prerequisites
   hosts: tag_ansible_kubernetes
