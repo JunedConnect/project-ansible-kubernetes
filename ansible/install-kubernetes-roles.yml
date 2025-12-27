@@ -1,17 +1,17 @@
 - name: prerequisites
-  hosts: tag_ansible_kubernetes
+  hosts: tag_control_plane:tag_worker_node
   become: true
   roles:
     - 1-prerequisites
 
 - name: install-containerd
-  hosts: tag_ansible_kubernetes
+  hosts: tag_control_plane:tag_worker_node
   become: true
   roles:
     - 2-install-containerd
 
 - name: install-kubernetes
-  hosts: tag_ansible_kubernetes
+  hosts: tag_control_plane:tag_worker_node
   become: true
   vars_files:
   - ./variables.yml
