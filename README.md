@@ -104,7 +104,7 @@ cd terraform && terraform init && terraform apply
 
 ```bash
 cd ansible
-ansible-inventory -i inventory --graph # This displays the discovered hosts grouped by their tags (e.g., `tag_control_plane`, `tag_worker_node`).
+ansible-inventory -i inventory --graph
 ```
 <br>
 
@@ -114,7 +114,7 @@ ansible-inventory -i inventory --graph # This displays the discovered hosts grou
    
 ```bash
 cd ansible
-ansible all -m ping -i inventory # This tests SSH connectivity to all EC2 instances via the bastion host.
+ansible all -m ping -i inventory
 ```
 
 <br>
@@ -123,7 +123,7 @@ ansible all -m ping -i inventory # This tests SSH connectivity to all EC2 instan
 
 ```bash
 cd ansible
-ansible-playbook install-kubernetes.yml -i inventory # This installs and configures Kubernetes on the EC2 instances.
+ansible-playbook install-kubernetes.yml -i inventory
 ```
 
 <br>
@@ -148,9 +148,7 @@ ssh -o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/playground -W %h:
 
 To use `kubectl` with the cluster, SSH into the control plane node (as shown with the command above). The Kubernetes context has already been configured, so you can use `kubectl` commands straight away:
 
-```bash
-kubectl get nodes
-```
+<br>
 
 You can test the cluster by running a test pod:
 
@@ -165,11 +163,9 @@ The `kubectl describe` command will show which node the pod is running on.
 
 ## Cleanup
 
-   To remove all infrastructure:
-
-   ```bash
-   cd terraform && terraform destroy
-   ```
+```bash
+cd terraform && terraform destroy
+```
 
 <br>
 
