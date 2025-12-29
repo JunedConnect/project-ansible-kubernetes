@@ -1,5 +1,4 @@
 # General
-name = "juned-cluster"
 aws_tags = {
   Environment = "dev"
   Project     = "ansible-kubernetes"

@@ -1,11 +1,5 @@
 #General
 
-variable "name" {
-  description = "Resource Name"
-  type        = string
-}
-
-
 variable "aws_tags" {
   description = "Tags for Resources"
   type        = map(string)
