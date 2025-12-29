@@ -18,10 +18,12 @@ compose: # these variables below apply to every ec2 instance
   ansible_user: '"ubuntu"'
   ansible_ssh_common_args: >- 
     '"-o ProxyCommand="ssh
+    -o StrictHostKeyChecking=no
     -i ~/.ssh/playground
     -W %h:%p
     -q {{ ansible_user }}@{{ hostvars["bastion-host"]["public_ip_address"] }}""'
 
 # I had used this link to get the ansible_ssh_common_args variable to work : https://stackoverflow.com/questions/73198103/use-of-hosts-in-ansible-ssh-common-args
+# You can potentially use the proxyjump option instead of the proxycommand for ansible_ssh_common_args : https://goteleport.com/blog/ssh-proxyjump-ssh-proxycommand/
 
 # some of the variables for the 'compose' section above were fiddly to get working as I had to trial and error with different combinations of "" and '' to get them to be recognised

@@ -1,0 +1,7 @@
+# the variable "ansible_user" will be automatically picked up from the group_vars directory or from the aws_ec2 inventory file (whevever you have decided to place the value)
+
+kube_version: v1.35
+kube_components_version: 1.35.0-1.1
+
+cilium_version: v1.18.3
+clusterPoolIPv4PodCIDRList: 20.0.0.0/8

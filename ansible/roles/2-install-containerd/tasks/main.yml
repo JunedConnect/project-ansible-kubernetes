@@ -15,6 +15,17 @@
     register: systemd_cgroup
     when: containerd_config.stat.exists
 
+  - name: Containerd Config Exists Check Output
+    ansible.builtin.debug:
+      msg:
+      - "Config exists: {{ containerd_config.stat.exists }}"
+
+  - name: SystemdCgroup Value Check Output
+    ansible.builtin.debug:
+      msg:
+      - "{{ systemd_cgroup.stdout }}"
+    when: containerd_config.stat.exists
+
   - name: Configure containerd
     ansible.builtin.shell: |
       mkdir -p /etc/containerd

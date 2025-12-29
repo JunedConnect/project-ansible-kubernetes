@@ -1,11 +1,5 @@
 #General
 
-variable "name" {
-  description = "Resource Name"
-  type        = string
-}
-
-
 variable "aws_tags" {
   description = "Tags for Resources"
   type        = map(string)
@@ -78,4 +72,31 @@ variable "route_cidr_block" {
   description = "CIDR block for the route"
   type        = string
   default     = "0.0.0.0/0"
+}
+
+
+#EC2
+
+variable "ami_id" {
+  description = "AMI ID for EC2 instances"
+  type        = string
+  default     = "ami-0a0ff88d0f3f85a14" # Ubuntu 22.04 LTS
+}
+
+variable "bastion_instance_type" {
+  description = "Instance type for bastion host"
+  type        = string
+  default     = "t3.micro"
+}
+
+variable "control_plane_instance_type" {
+  description = "Instance type for control plane"
+  type        = string
+  default     = "t3.medium"
+}
+
+variable "worker_node_instance_type" {
+  description = "Instance type for worker nodes"
+  type        = string
+  default     = "t3.micro"
 }
