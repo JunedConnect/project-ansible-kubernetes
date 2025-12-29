@@ -11,21 +11,15 @@
       rm cilium-linux-${CLI_ARCH}.tar.gz cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
     register: cilium_download
 
-  # - name: Check Cilium version
-  #   ansible.builtin.shell: cilium version
-  #   register: cilium_version
-
   - name: Check if Cilium is Installed
     ansible.builtin.shell: cilium version | grep "cilium image (running):"
     register: cilium_running
 
-  - name: Debug Cilium version check output
+  - name: Cilium Version Check Output
     ansible.builtin.debug:
       msg:
-      - "stdout: {{ cilium_running.stdout }}"
-
+      - "{{ cilium_running.stdout }}"
 
   - name: Install Cilium
     ansible.builtin.shell: cilium install --version {{ cilium_version }} --set-string ipam.operator.clusterPoolIPv4PodCIDRList={{ clusterPoolIPv4PodCIDRList }}
-#    when: "'cilium image (running): unknown. Unable to obtain cilium version. Reason: release: not found' in cilium_version.stdout"
     when: "'unknown. Unable to obtain cilium version. Reason: release: not found' in cilium_running.stdout" # this means that the task will only when on the condition cilium is not installed on the kubernetes cluster
