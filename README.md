@@ -48,6 +48,8 @@ The project demonstrates a **Kubernetes cluster deployment on AWS EC2** using **
 - kubectl
 - SSH keypair (`~/.ssh/playground` and `~/.ssh/playground.pub`)
 
+<br>
+
 **Creating SSH Keypair**:
 
 To create the SSH Keypair, run this command:
@@ -62,10 +64,10 @@ This creates both the private key (`~/.ssh/playground`) and public key (`~/.ssh/
 
 ## Configuration Dependencies
 
-Before deploying, update these configuration values:
+If needed, update these configuration values:
 
 **Terraform Configuration** (`terraform/terraform.tfvars`):
-- `aws_tags` - Resource tags (Environment, Project, Owner, Terraform)
+- `aws_tags` - Resource tags
 
 **Ansible Configuration** (`ansible/install-kubernetes-variables.yml`):
 - `kube_version` - Kubernetes version
@@ -73,46 +75,56 @@ Before deploying, update these configuration values:
 - `cilium_version` - Cilium CNI version
 - `clusterPoolIPv4PodCIDRList` - Cilium pod CIDR range
 
+<br>
+
 **Important**: Ensure that the Cilium pod CIDR range (configured in `ansible/install-kubernetes-variables.yml`) is different from the AWS VPC CIDR range (configured in `terraform/terraform.tfvars`). If they overlap, there will be a network clash and both Cilium and AWS networking will fail. For example, if your VPC uses `10.0.0.0/16`, use a different range like `20.0.0.0/8` for Cilium.
 
 <br>
 
 ## How to Deploy
 
+<br>
+
 1. **Deploy Infrastructure**:
 
-   ```bash
-   cd terraform && terraform init && terraform apply
-   ```
+```bash
+cd terraform && terraform init && terraform apply
+```
    This creates the VPC and EC2 instances (i.e. bastion host, control plane, and worker nodes) in AWS. The terraform output will display the IP addresses of the created instances.
+
+<br>
 
 2. **Verify Ansible Connectivity**:
 
-   **Note**: Ansible uses the AWS credentials configured for your system (via AWS CLI or environment variables). If AWS credentials are not configured, Ansible will not be able to discover EC2 instances.
+**Note**: Ansible uses the AWS credentials configured for your system (via AWS CLI or environment variables). If AWS credentials are not configured, Ansible will not be able to discover EC2 instances.
+
+<br>
 
    Check that Ansible can discover the EC2 instances:
 
-   ```bash
-   cd ansible
-   ansible-inventory -i inventory --graph
-   ```
-   This displays the discovered hosts grouped by their tags (e.g., `tag_control_plane`, `tag_worker_node`).
+```bash
+cd ansible
+ansible-inventory -i inventory --graph # This displays the discovered hosts grouped by their tags (e.g., `tag_control_plane`, `tag_worker_node`).
+```
+<br>
+
 
    Verify connectivity to all instances:
 
-   ```bash
-   cd ansible
-   ansible all -m ping -i inventory
-   ```
-   This tests SSH connectivity to all EC2 instances via the bastion host.
+   
+```bash
+cd ansible
+ansible all -m ping -i inventory # This tests SSH connectivity to all EC2 instances via the bastion host.
+```
+
+<br>
 
 3. **Install Kubernetes**:
 
-   ```bash
-   cd ansible
-   ansible-playbook install-kubernetes.yml -i inventory
-   ```
-   This installs and configures Kubernetes on the EC2 instances.
+```bash
+cd ansible
+ansible-playbook install-kubernetes.yml -i inventory # This installs and configures Kubernetes on the EC2 instances.
+```
 
 <br>
 
@@ -122,30 +134,32 @@ Before deploying, update these configuration values:
 
    To SSH into any cluster node (control plane or worker), use the bastion host as a jump host:
 
-   ```bash
-   ssh -o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/playground -W %h:%p -q ubuntu@<bastion-host-public-ip>" -i ~/.ssh/playground ubuntu@<kubernetes-cluster-private-ip>
-   ```
+```bash
+ssh -o ProxyCommand="ssh -o StrictHostKeyChecking=no -i ~/.ssh/playground -W %h:%p -q ubuntu@<bastion-host-public-ip>" -i ~/.ssh/playground ubuntu@<kubernetes-cluster-private-ip>
+```
 
    Replace:
    - `<bastion-host-public-ip>` with the bastion host's public IP (from `terraform output bastion_host_public_ip`)
    - `<kubernetes-cluster-private-ip>` with the private IP of the control plane or worker node (from `terraform outputs`)
 
+<br>
+
 **Using kubectl**:
 
-   To use `kubectl` with the cluster, SSH into the control plane node (as shown with the command above). The Kubernetes context has already been configured, so you can use `kubectl` commands straight away:
+To use `kubectl` with the cluster, SSH into the control plane node (as shown with the command above). The Kubernetes context has already been configured, so you can use `kubectl` commands straight away:
 
-   ```bash
-   kubectl get nodes
-   ```
+```bash
+kubectl get nodes
+```
 
-   You can test the cluster by running a test pod:
+You can test the cluster by running a test pod:
 
-   ```bash
-   kubectl run nginx-test --image=nginx
-   kubectl describe pod nginx-test
-   ```
+```bash
+kubectl run nginx-test --image=nginx
+kubectl describe pod nginx-test
+```
 
-   The `kubectl describe` command will show which node the pod is running on.
+The `kubectl describe` command will show which node the pod is running on.
 
 <br>
 
@@ -197,4 +211,5 @@ https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-ku
 https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/
 
 **KubeConfig - Creating Additional Users**
+
 https://kubernetes.io/docs/tasks/administer-cluster/kubeadm/kubeadm-certs/#kubeconfig-additional-users
