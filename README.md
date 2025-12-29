@@ -1,4 +1,4 @@
-# <img src="https://raw.githubusercontent.com/JunedConnect/project-ansible-kubernetes/main/images/ansible-logo.jpg" alt="Ansible Logo" width="40" height="40"> Ansible Auto
+# <img src="https://raw.githubusercontent.com/JunedConnect/project-ansible-kubernetes/main/images/ansible-logo.png" alt="Ansible Logo" width="40" height="40"> Ansible Auto
 
 The project demonstrates a **Kubernetes cluster deployment on AWS EC2** using **Terraform** to provision AWS infrastructure and **Ansible** to install and configure Kubernetes. This setup showcases how to build a Kubernetes cluster using `kubeadm` on EC2 instances, with a cluster nodes on private nodes and bastion host for secure access to cluster nodes.
 
